@@ -7,8 +7,10 @@ harx : extract files from HAR file. Domain name and all fold info are kept.
 
 
 harx
-========
-usage: harx [options] har-file
+--------
+
+Usage: harx [options] har-file
+
     -l                  List files , lead by [index]
     -lp urlPattern      like -l , but filter with urlPattern
     -a dir              extract All content to [dir]
