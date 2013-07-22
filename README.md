@@ -22,12 +22,12 @@ Examples
 
 Step1: Save HAR.
 
-    - open Chrome browser ;
-    - open Develeper Tools, switch to Network panel;
-    - enter website url, you will see all requests in Network panel;
-    - Right Click in Network panel, choose "Save as HAR with Content", that's all.
+- open Chrome browser ;
+- open Develeper Tools, switch to Network panel;
+- enter website url, you will see all requests in Network panel;
+- Right Click in Network panel, choose "Save as HAR with Content", that's all.
 
-    or you can try [Capture HAR files from a remote Chrome instance][3]
+- or you can try [Capture HAR files from a remote Chrome instance][3]
 
 Step2: Explor content in HAR
 
