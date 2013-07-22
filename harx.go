@@ -50,7 +50,10 @@ func (e *HEntry) dump(dir string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	host, path := u.Host, u.Path // host,path = www.google.com , /search.do
+	scheme, host, path := u.Scheme, u.Host, u.Path // host,path = www.google.com , /search.do
+    if scheme=="chrome-extension" {
+        return  // ignore all chrome-extension requests.
+    }
 	if i := strings.LastIndex(host, ":"); i != -1 {
 		host = host[0:i] // remove port
 	}
