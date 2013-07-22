@@ -27,6 +27,8 @@ Step1: Save HAR.
     - enter website url, you will see all requests in Network panel;
     - Right Click in Network panel, choose "Save as HAR with Content", that's all.
 
+    or you can try [Capture HAR files from a remote Chrome instance][3]
+
 Step2: Explor content in HAR
 
     $ harx -l /tmp/site.har
@@ -53,3 +55,4 @@ Resources
 
 [1]: http://www.softwareishard.com/blog/har-12-spec/
 [2]: http://www.softwareishard.com/blog/har-viewer/
+[3]: https://github.com/cyrus-and/chrome-har-capturer
