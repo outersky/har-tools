@@ -52,7 +52,9 @@ Resources
 
 - [HAR 1.2 Spec][1]
 - [HAR Viewer][2]
+- [Tools, projects and applications that support HTTP Archive format (HAR)][3]
 
 [1]: http://www.softwareishard.com/blog/har-12-spec/
 [2]: http://www.softwareishard.com/blog/har-viewer/
 [3]: https://github.com/cyrus-and/chrome-har-capturer
+[4]: http://www.softwareishard.com/blog/har-adopters
