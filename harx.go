@@ -185,10 +185,12 @@ usage: harx [options] har-file
 	}
 
 	file, err := os.Open(fileName)
+
 	if err == nil {
 		handle(bufio.NewReader(file))
 	} else {
-		fmt.Printf("Cannot open file : %s", os.Args[1])
+		fmt.Printf("Cannot open file : %s\n", fileName)
+		log.Fatal(err)
 		os.Exit(-1)
 	}
 
