@@ -57,7 +57,7 @@ func (e *HEntry) dump(dir string) {
 	if i := strings.LastIndex(host, ":"); i != -1 {
 		host = host[0:i] // remove port
 	}
-	path = host + path
+	path = dir + "/" + host + path
 	if j := strings.LastIndex(path, "/"); j != -1 {
 		os.MkdirAll(path[0:j], os.ModePerm)
 		e.Response.Content.writeTo(path)
@@ -179,17 +179,18 @@ usage: harx [options] har-file
 		fileName = os.Args[3]
 	}
 
-	if extractPattern || extractAll {
-		os.MkdirAll(dir, os.ModePerm)
-		os.Chdir(dir)
-	}
-
 	file, err := os.Open(fileName)
+
 	if err == nil {
 		handle(bufio.NewReader(file))
 	} else {
-		fmt.Printf("Cannot open file : %s", os.Args[1])
+		fmt.Printf("Cannot open file : %s\n", fileName)
+		log.Fatal(err)
 		os.Exit(-1)
 	}
 
+	if extractPattern || extractAll {
+		os.MkdirAll(dir, os.ModePerm)
+		//os.Chdir(dir)
+	}
 }
