@@ -74,7 +74,7 @@ func decode(str []byte, fileName string) {
 }
 
 func (c *HContent) writeTo(f string) {
-	if strings.Index(c.MimeType, "text") != -1 || strings.Index(c.MimeType, "javascript") != -1 {
+	if strings.Index(c.MimeType, "text") != -1 || strings.Index(c.MimeType, "javascript") != -1 || strings.Index(c.MimeType, "json") != -1 {
 		ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
 	} else {
 		decode([]byte(c.Text), f)
