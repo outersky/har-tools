@@ -168,14 +168,14 @@ func main() {
 	if len(os.Args) == 1 {
 		fmt.Println(`
 usage: harx [options] har-file
-    -l                        List files , lead by [index]
-    -lu urlPattern            like -l , but filter with urlPattern
-    -lm mimetypePattern       like -l , but filter with response mimetype
-    -a dir                    extract All content to [dir]
-    -i Index                  extract the [index] content , need run with -l first to get [index]
-    -u urlPattern dir         like -a , but filter with urlPattern
-    -m mimetypePattern dir    like -a , but filter with mimetypePattern
-    -md mimetypePattern dir   like -m , but dump contents directly to [dir]
+    -l                         List files , lead by [index]
+    -lu  urlPattern            like -l , but filter by urlPattern
+    -lm  mimetypePattern       like -l , but filter by response mimetype
+    -x   dir                   eXtract all content to [dir]
+    -xi  index                 eXtract the [index] content , need run with -l first to get [index]
+    -xu  urlPattern      dir   like -x , but filter by urlPattern
+    -xm  mimetypePattern dir   like -x , but filter by mimetypePattern
+    -xmd mimetypePattern dir   like -xm , but Dump matching files directly to [dir]
 
         `)
 		return
@@ -194,27 +194,27 @@ usage: harx [options] har-file
 		list = true
 		mimetypePattern = regexp.MustCompile(os.Args[2])
 		fileName = os.Args[3]
-	case "-i":
+	case "-xi":
 		extract = true
 		extractIndex, _ = strconv.Atoi(os.Args[2])
 		fileName = os.Args[3]
-	case "-u":
+	case "-xu":
 		extractPattern = true
 		urlPattern = regexp.MustCompile(os.Args[2])
 		dir = os.Args[3]
 		fileName = os.Args[4]
-	case "-m":
+	case "-xm":
 		extractPattern = true
 		mimetypePattern = regexp.MustCompile(os.Args[2])
 		dir = os.Args[3]
 		fileName = os.Args[4]
-	case "-md":
+	case "-xmd":
 		extractPattern = true
 		dumpDirectly = true
 		mimetypePattern = regexp.MustCompile(os.Args[2])
 		dir = os.Args[3]
 		fileName = os.Args[4]
-	case "-a":
+	case "-x":
 		extractAll = true
 		dir = os.Args[2]
 		fileName = os.Args[3]
