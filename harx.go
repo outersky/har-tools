@@ -71,7 +71,6 @@ func (e *HEntry) dumpDirectly(dir string) {
 	}
 	path := u.Path
 	if j := strings.LastIndex(path, "/"); j != -1 {
-		fmt.Println(dir + path[j:])
 		e.Response.Content.writeTo(dir + path[j:])
 	}
 }
