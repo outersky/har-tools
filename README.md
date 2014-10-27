@@ -11,11 +11,14 @@ harx
 
 Usage: harx [options] har-file
 
-    -l                  List files , lead by [index]
-    -lu urlPattern      like -l , but filter with urlPattern
-    -a dir              extract All content to [dir]
-    -i Index            extract the [index] content , need run with -l first to get [index]
-    -u urlPattern dir   like -a , but filter with urlPattern
+    -l                          List files , lead by [index]
+    -lu urlPattern              like -l , but filter with urlPattern
+    -lm mimetypePattern         like -l , but filter with response mimetype
+    -a dir                      extract All content to [dir]
+    -i Index                    extract the [index] content , need run with -l first to get [index]
+    -u urlPattern dir           like -a , but filter with urlPattern
+    -m mimetypePattern dir      like -a , but filter with mimetypePattern
+    -md mimetypePattern dir     like -m , but dump contents directly to [dir]
 
 Examples
 --------
