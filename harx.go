@@ -51,9 +51,9 @@ func (e *HEntry) dump(dir string) {
 		log.Fatal(err)
 	}
 	scheme, host, path := u.Scheme, u.Host, u.Path // host,path = www.google.com , /search.do
-    if scheme=="chrome-extension" {
-        return  // ignore all chrome-extension requests.
-    }
+	if scheme == "chrome-extension" {
+		return // ignore all chrome-extension requests.
+	}
 	if i := strings.LastIndex(host, ":"); i != -1 {
 		host = host[0:i] // remove port
 	}
@@ -61,6 +61,18 @@ func (e *HEntry) dump(dir string) {
 	if j := strings.LastIndex(path, "/"); j != -1 {
 		os.MkdirAll(path[0:j], os.ModePerm)
 		e.Response.Content.writeTo(path)
+	}
+}
+
+func (e *HEntry) dumpDirectly(dir string) {
+	u, err := url.Parse(e.Request.Url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	path := u.Path
+	if j := strings.LastIndex(path, "/"); j != -1 {
+		fmt.Println(dir + path[j:])
+		e.Response.Content.writeTo(dir + path[j:])
 	}
 }
 
@@ -106,6 +118,10 @@ func output(index int, entry HEntry) {
 			if len(urlPattern.FindString(entry.Request.Url)) > 0 {
 				listEntries(index, entry)
 			}
+		} else if mimetypePattern != nil {
+			if len(mimetypePattern.FindString(entry.Response.Content.MimeType)) > 0 {
+				listEntries(index, entry)
+			}
 		} else {
 			listEntries(index, entry)
 		}
@@ -114,8 +130,14 @@ func output(index int, entry HEntry) {
 			extractOne(entry)
 		}
 	} else if extractPattern {
-		if len(urlPattern.FindString(entry.Request.Url)) > 0 {
+		if urlPattern != nil && len(urlPattern.FindString(entry.Request.Url)) > 0 {
 			entry.dump(dir)
+		} else if mimetypePattern != nil && len(mimetypePattern.FindString(entry.Response.Content.MimeType)) > 0 {
+			if dumpDirectly {
+				entry.dumpDirectly(dir)
+			} else {
+				entry.dump(dir)
+			}
 		}
 	} else if extractAll {
 		entry.dump(dir)
@@ -134,9 +156,11 @@ var list bool = false
 
 var extract bool = false
 var extractIndex int = -1
+var dumpDirectly bool = true
 
 var extractPattern bool = false
 var urlPattern *regexp.Regexp = nil
+var mimetypePattern *regexp.Regexp = nil
 
 var extractAll bool = false
 var dir string = ""
@@ -145,11 +169,22 @@ func main() {
 	if len(os.Args) == 1 {
 		fmt.Println(`
 usage: harx [options] har-file
+<<<<<<< HEAD
     -l                  List files , lead by [index]
     -lu urlPattern      like -l , but filter with urlPattern
     -a dir              extract All content to [dir]
     -i Index            extract the [index] content , need run with -l first to get [index]
     -u urlPattern dir   like -a , but filter with urlPattern
+=======
+    -l                        List files , lead by [index]
+    -lu urlPattern            like -l , but filter with urlPattern
+    -lm mimetypePattern       like -l , but filter with response mimetype
+    -a dir                    extract All content to [dir]
+    -i Index                  extract the [index] content , need run with -l first to get [index]
+    -u urlPattern dir         like -a , but filter with urlPattern
+    -m mimetypePattern dir    like -a , but filter with mimetypePattern
+    -md mimetypePattern dir   like -m , but dump contents directly to [dir]
+>>>>>>> 52a186a... Added -lm, -m, and -md switches for file filtering by mimetype
 
         `)
 		return
@@ -164,6 +199,10 @@ usage: harx [options] har-file
 		list = true
 		urlPattern = regexp.MustCompile(os.Args[2])
 		fileName = os.Args[3]
+	case "-lm":
+		list = true
+		mimetypePattern = regexp.MustCompile(os.Args[2])
+		fileName = os.Args[3]
 	case "-i":
 		extract = true
 		extractIndex, _ = strconv.Atoi(os.Args[2])
@@ -171,6 +210,17 @@ usage: harx [options] har-file
 	case "-u":
 		extractPattern = true
 		urlPattern = regexp.MustCompile(os.Args[2])
+		dir = os.Args[3]
+		fileName = os.Args[4]
+	case "-m":
+		extractPattern = true
+		mimetypePattern = regexp.MustCompile(os.Args[2])
+		dir = os.Args[3]
+		fileName = os.Args[4]
+	case "-md":
+		extractPattern = true
+		dumpDirectly = true
+		mimetypePattern = regexp.MustCompile(os.Args[2])
 		dir = os.Args[3]
 		fileName = os.Args[4]
 	case "-a":
