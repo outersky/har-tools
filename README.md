@@ -18,7 +18,7 @@ Usage: harx [options] har-file
     -xi  index                   eXtract the [index] content , need run with -l first to get [index]
     -xu  urlPattern      dir     like -x , but filter by urlPattern
     -xm  mimetypePattern dir     like -x , but filter by mimetypePattern
-    -xmd mimetypePattern dir     like -xmd , but dump contents directly to [dir]
+    -xmd mimetypePattern dir     like -xm , but dump contents directly to [dir]
 
 Examples
 --------
