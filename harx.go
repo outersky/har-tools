@@ -155,7 +155,7 @@ var list bool = false
 
 var extract bool = false
 var extractIndex int = -1
-var dumpDirectly bool = true
+var dumpDirectly bool = false
 
 var extractPattern bool = false
 var urlPattern *regexp.Regexp = nil
