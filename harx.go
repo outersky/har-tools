@@ -234,6 +234,7 @@ usage: harx [options] har-file
 		dumpDirectly = true
 		mimetypePattern = regexp.MustCompile(os.Args[2])
 		dir = os.Args[3]
+		os.Mkdir(dir, os.ModePerm)
 		fileName = os.Args[4]
 	case "-x":
 		extractAll = true
