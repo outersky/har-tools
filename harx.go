@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"path/filepath"
 )
 
 type Har struct {
@@ -84,12 +85,32 @@ func decode(str []byte, fileName string) {
 	}
 }
 
-func (c *HContent) writeTo(f string) {
+func (c *HContent) writeTo(desiredFileName string) {
+	f := getNoDuplicatePath(desiredFileName)
+
 	if strings.Index(c.MimeType, "text") != -1 || strings.Index(c.MimeType, "javascript") != -1 || strings.Index(c.MimeType, "json") != -1 {
 		ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
 	} else {
 		decode([]byte(c.Text), f)
 	}
+}
+
+func fileExists(path string) bool {
+	abs_path, _ := filepath.Abs(path)
+	_, err := os.Stat(abs_path)
+	return err == nil
+}
+
+func getNoDuplicatePath(desiredFileName string) (path string) {
+	var i int
+	for i, path = 2, desiredFileName ; fileExists(path) ; i++ {
+
+		ext := filepath.Ext(desiredFileName)
+		pathBeforeExtension := strings.TrimSuffix(desiredFileName, ext)
+
+		path = fmt.Sprintf("%s_(%d)%s", pathBeforeExtension, i, ext)
+	}
+	return
 }
 
 func (c *HContent) writeToFile(f *os.File) {
@@ -213,6 +234,7 @@ usage: harx [options] har-file
 		dumpDirectly = true
 		mimetypePattern = regexp.MustCompile(os.Args[2])
 		dir = os.Args[3]
+		os.Mkdir(dir, os.ModePerm)
 		fileName = os.Args[4]
 	case "-x":
 		extractAll = true
