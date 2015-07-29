@@ -9,10 +9,10 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
-	"path/filepath"
 )
 
 type Har struct {
@@ -20,7 +20,7 @@ type Har struct {
 }
 
 type HLog struct {
-	//Version string
+	Version string
 	Entries []HEntry
 }
 
@@ -44,8 +44,10 @@ type HContent struct {
 	Size     int
 	MimeType string
 	Text     string
+	Encoding string
 }
 
+// dump files to dir, keep hostname and path info as subfolders.
 func (e *HEntry) dump(dir string) {
 	u, err := url.Parse(e.Request.Url)
 	if err != nil {
@@ -65,6 +67,7 @@ func (e *HEntry) dump(dir string) {
 	}
 }
 
+// dump all files to the very dir, no subfolder created.
 func (e *HEntry) dumpDirectly(dir string) {
 	u, err := url.Parse(e.Request.Url)
 	if err != nil {
@@ -88,10 +91,18 @@ func decode(str []byte, fileName string) {
 func (c *HContent) writeTo(desiredFileName string) {
 	f := getNoDuplicatePath(desiredFileName)
 
-	if strings.Index(c.MimeType, "text") != -1 || strings.Index(c.MimeType, "javascript") != -1 || strings.Index(c.MimeType, "json") != -1 {
-		ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
+	if version12 { // Encoding is optional and added in Har spec v1.2
+		if strings.EqualFold(c.Encoding, "base64") {
+			decode([]byte(c.Text), f)
+		} else {
+			ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
+		}
 	} else {
-		decode([]byte(c.Text), f)
+		if strings.Index(c.MimeType, "text") != -1 || strings.Index(c.MimeType, "javascript") != -1 || strings.Index(c.MimeType, "json") != -1 {
+			ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
+		} else {
+			decode([]byte(c.Text), f)
+		}
 	}
 }
 
@@ -103,7 +114,7 @@ func fileExists(path string) bool {
 
 func getNoDuplicatePath(desiredFileName string) (path string) {
 	var i int
-	for i, path = 2, desiredFileName ; fileExists(path) ; i++ {
+	for i, path = 2, desiredFileName; fileExists(path); i++ {
 
 		ext := filepath.Ext(desiredFileName)
 		pathBeforeExtension := strings.TrimSuffix(desiredFileName, ext)
@@ -126,6 +137,9 @@ func handle(r *bufio.Reader) {
 		log.Fatal(err)
 		os.Exit(-2)
 	} else {
+		if har.Log.Version == "1.2" {
+			version12 = true
+		}
 		for index, entry := range har.Log.Entries {
 			output(index, entry)
 		}
@@ -185,20 +199,25 @@ var mimetypePattern *regexp.Regexp = nil
 var extractAll bool = false
 var dir string = ""
 
-func main() {
-	if len(os.Args) == 1 {
-		fmt.Println(`
+var version12 bool = false // is of version 1.2 format ?
+
+func help() {
+	fmt.Println(`
 usage: harx [options] har-file
     -l                         List files , lead by [index]
-    -lu  urlPattern            like -l , but filter by urlPattern
-    -lm  mimetypePattern       like -l , but filter by response mimetype
+    -lu  urlPattern            List files filtered by UrlPattern
+    -lm  mimetypePattern       List files filtered by response Mimetype
     -x   dir                   eXtract all content to [dir]
-    -xi  index                 eXtract the [index] content , need run with -l first to get [index]
-    -xu  urlPattern      dir   like -x , but filter by urlPattern
-    -xm  mimetypePattern dir   like -x , but filter by mimetypePattern
-    -xmd mimetypePattern dir   like -xm , but Dump matching files directly to [dir]
+    -xi  index                 eXtract the [index] content to stdout , need run with -l first to get [index]
+    -xu  urlPattern      dir   eXtract to [dir] with UrlPattern filter
+    -xm  mimetypePattern dir   eXtract to [dir] with MimetypePattern filter
+    -xmd mimetypePattern dir   eXtract to [dir] Directly without hostname and path info, with MimetypePattern filter
 
-        `)
+    `)
+}
+func main() {
+	if len(os.Args) == 1 {
+		help()
 		return
 	}
 
@@ -234,17 +253,22 @@ usage: harx [options] har-file
 		dumpDirectly = true
 		mimetypePattern = regexp.MustCompile(os.Args[2])
 		dir = os.Args[3]
-		os.Mkdir(dir, os.ModePerm)
 		fileName = os.Args[4]
 	case "-x":
 		extractAll = true
 		dir = os.Args[2]
 		fileName = os.Args[3]
+	default:
+		help()
+		return
 	}
 
 	file, err := os.Open(fileName)
 
 	if err == nil {
+		if dir != "" {
+			os.MkdirAll(dir, os.ModePerm)
+		}
 		handle(bufio.NewReader(file))
 	} else {
 		fmt.Printf("Cannot open file : %s\n", fileName)
@@ -252,8 +276,4 @@ usage: harx [options] har-file
 		os.Exit(-1)
 	}
 
-	if extractPattern || extractAll {
-		os.MkdirAll(dir, os.ModePerm)
-		//os.Chdir(dir)
-	}
 }
