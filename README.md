@@ -45,7 +45,7 @@ Step2: Explor content in HAR
 
 Step3: Extract them all.
 
-    $ harx -a /tmp/some_dir /tmp/site.har
+    $ harx -x /tmp/some_dir /tmp/site.har
 
     Now you can jump into that folder to see what you get .
 
