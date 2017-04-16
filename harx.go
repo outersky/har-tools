@@ -79,8 +79,8 @@ func (e *HEntry) dumpDirectly(dir string) {
 	}
 }
 
-func decode(str []byte, fileName string) {
-	data, err := base64.StdEncoding.DecodeString(string(str))
+func decode(str string, fileName string) {
+	data, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
 		log.Fatal(err)
 	} else {
@@ -95,11 +95,11 @@ func (c *HContent) writeTo(desiredFileName string) {
 
 	switch {
 	case strings.EqualFold(c.Encoding, "base64"):
-		decode([]byte(c.Text), f)
+		decode(c.Text, f)
 	case textContentPattern.MatchString(c.MimeType):
 		ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
 	default:
-		decode([]byte(c.Text), f)
+		decode(c.Text, f)
 	}
 }
 
