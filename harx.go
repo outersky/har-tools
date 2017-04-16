@@ -88,21 +88,18 @@ func decode(str []byte, fileName string) {
 	}
 }
 
+var textContentPattern = regexp.MustCompile("text|json|javascript|xml")
+
 func (c *HContent) writeTo(desiredFileName string) {
 	f := getNoDuplicatePath(desiredFileName)
 
-	if version12 { // Encoding is optional and added in Har spec v1.2
-		if strings.EqualFold(c.Encoding, "base64") {
-			decode([]byte(c.Text), f)
-		} else {
-			ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
-		}
-	} else {
-		if strings.Index(c.MimeType, "text") != -1 || strings.Index(c.MimeType, "javascript") != -1 || strings.Index(c.MimeType, "json") != -1 {
-			ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
-		} else {
-			decode([]byte(c.Text), f)
-		}
+	switch {
+	case strings.EqualFold(c.Encoding, "base64"):
+		decode([]byte(c.Text), f)
+	case textContentPattern.MatchString(c.MimeType):
+		ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
+	default:
+		decode([]byte(c.Text), f)
 	}
 }
 
