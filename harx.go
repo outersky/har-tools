@@ -82,13 +82,13 @@ func (e *HEntry) dumpDirectly(dir string) {
 func decode(str string, fileName string) {
 	data, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err," fileName:", fileName)
 	} else {
 		ioutil.WriteFile(fileName, data, os.ModePerm)
 	}
 }
 
-var textContentPattern = regexp.MustCompile("text|json|javascript|xml")
+var textContentPattern = regexp.MustCompile("text|json|javascript|ecmascript|xml")
 
 func (c *HContent) writeTo(desiredFileName string) {
 	f := getNoDuplicatePath(desiredFileName)
