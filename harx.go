@@ -93,13 +93,10 @@ var textContentPattern = regexp.MustCompile("text|json|javascript|ecmascript|xml
 func (c *HContent) writeTo(desiredFileName string) {
 	f := getNoDuplicatePath(desiredFileName)
 
-	switch {
-	case strings.EqualFold(c.Encoding, "base64"):
+	if strings.EqualFold(c.Encoding, "base64") {
 		decode(c.Text, f)
-	case textContentPattern.MatchString(c.MimeType):
+	} else {
 		ioutil.WriteFile(f, []byte(c.Text), os.ModePerm)
-	default:
-		decode(c.Text, f)
 	}
 }
 
