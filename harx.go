@@ -82,7 +82,7 @@ func (e *HEntry) dumpDirectly(dir string) {
 func decode(str string, fileName string) {
 	data, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
-		log.Fatal(err," fileName:", fileName)
+		log.Fatal(err, " fileName:", fileName)
 	} else {
 		ioutil.WriteFile(fileName, data, os.ModePerm)
 	}
