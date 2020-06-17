@@ -6,6 +6,13 @@ tools for HAR file
 harx : extract files from HAR file. Domain name and all fold info are kept.
 
 
+installation
+------------
+
+harx can be installed using (you need go 1.14)
+
+     go get -v github.com/codecare/har-tools/cmd/harx
+     
 harx
 --------
 
