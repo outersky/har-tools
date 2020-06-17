@@ -11,7 +11,7 @@ installation
 
 harx can be installed using (you need go 1.14)
 
-     go get -v github.com/codecare/har-tools/cmd/harx
+     go get -v github.com/outersky/har-tools/cmd/harx
      
 this will install an executable in your default path for go executables $GOPATH/bin (default GOPATH=$HOME/go)
 
