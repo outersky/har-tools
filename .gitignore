@@ -22,4 +22,6 @@ _testmain.go
 *.exe
 
 # Linux binary
-harx
+/harx
+
+.idea
