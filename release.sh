@@ -92,12 +92,12 @@ if ! typeExists "github-release"; then
   echo ""
 else
   h1 "Creating Release in Github"
-  github-release release -u outersky -r harx -t $VERSION
+  github-release release -u outersky -r har-tools -t $VERSION
 
   for FILE in build/tgz/*; do
     asset_name="$(basename $FILE)"
     info "Uploading build asset: ${asset_name}"
-    github-release upload -u outersky -r harx -t $VERSION -n "$asset_name" -f $FILE
+    github-release upload -u outersky -r har-tools -t $VERSION -n "$asset_name" -f $FILE
   done
 
   success "Done!"
