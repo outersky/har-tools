@@ -1,0 +1,28 @@
+style: github
+template: CHANGELOG.tpl.md
+info:
+  title: CHANGELOG
+  repository_url: https://github.com/outersky/har-tools
+options:
+  commits:
+  commit_groups:
+    title_maps:
+      feat: Features
+      fix: Bug Fixes
+      bugfix: Bug Fixes
+      perf: Performance Improvements
+      refactor: Code Refactoring
+      chore: Chore
+  header:
+    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.+)$"
+    pattern_maps:
+      - Type
+      - Scope
+      - Subject
+  merges:
+    pattern: "^(.*#\\d+.*)$"
+    pattern_maps:
+      - Source
+  notes:
+    keywords:
+      - BREAKING CHANGE

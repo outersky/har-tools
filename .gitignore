@@ -25,3 +25,7 @@ _testmain.go
 /harx
 
 .idea
+
+# build process
+bin/
+build/
