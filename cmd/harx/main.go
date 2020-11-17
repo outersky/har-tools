@@ -15,6 +15,8 @@ import (
 	"strings"
 )
 
+var version string
+
 type Har struct {
 	Log HLog
 }
@@ -209,6 +211,7 @@ usage: harx [options] har-file
     -xu  urlPattern      dir   eXtract to [dir] with UrlPattern filter
     -xm  mimetypePattern dir   eXtract to [dir] with MimetypePattern filter
     -xmd mimetypePattern dir   eXtract to [dir] Directly without hostname and path info, with MimetypePattern filter
+    -v                         Print version information
 
     `)
 }
@@ -255,6 +258,9 @@ func main() {
 		extractAll = true
 		dir = os.Args[2]
 		fileName = os.Args[3]
+	case "-v":
+		fmt.Printf("harx version %s\n", version)
+		return
 	default:
 		help()
 		return
